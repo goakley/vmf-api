@@ -2,8 +2,14 @@ vmf-api
 
 Licensed under the GNU GPL.
 
-This api is designed to help users build .vmf files, which are files read in by Valve's Source SDK Hammer World Editor.
+This api is designed to help users build .vmf files, which are files read in
+by Valve's Source SDK Hammer World Editor.
 
-Hammer saves world info in .vmf files.  When a world is completed, Hammer will then compile the .vmf file(s) into files that can be read by the Source Engine.
+Hammer saves world info in .vmf files.  When a world is completed, 
+Hammer will then compile the .vmf file(s) into files that can be read by
+the Source Engine.
 
-.vmf files are formatted in a similar fashion to JSON.  They consist of labels, with each individual label consisting of many parameters, which may be strings (text, integers, floats, etc.) or sub-labels.  These sub-groups are designated by curly braces {}.
+.vmf files are formatted in a similar fashion to JSON.
+They consist of labels, with each individual label consisting of many
+parameters, which may be strings (text, integers, floats, etc.) or sub-labels.
+These sub-groups are designated by curly braces {}.
