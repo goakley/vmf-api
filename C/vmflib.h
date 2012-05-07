@@ -1,6 +1,8 @@
 #ifndef VMFLIB_H
 #define VMFLIB_H
 
+#include <stdio.h>
+
 unsigned int vmf_id_counter = 1;
 
 // ---
@@ -59,11 +61,20 @@ typedef struct vmf_versioninfo
   /**/
   int prefab;
 } vmf_versioninfo;
-
-// represents a side in a vmf file
+/** A vmf_versioninfo object with default values; NOT for direct use */
+const vmf_versioninfo vmf_versioninfo_default_struct = 
+  {400, 439, 1, 100, 0};
 /**
- * Represents the side section of a .vmf file
- * .  This is used to hold information about the side of a solid (another 
+ * Returns a functional default vmf_versioninfo object.
+ */
+vmf_versioninfo vmf_versioninfo_default()
+{
+  return vmf_versioninfo_default_struct;
+}
+
+/**
+ * Represents the side section of a .vmf file.
+ * This is used to hold information about the side of a solid (another 
  * vmf object).
  */
 typedef struct vmf_side
@@ -92,6 +103,23 @@ typedef struct vmf_side
   /**/
   int smoothing_groups;
 } vmf_side;
+/** A vmf_side object with default values; NOT for direct use */
+const vmf_side vmf_side_default_struct = 
+  {.material="BRICK/BRICKFLOOR001A", 
+   .plane_points={{0,0,0},{0,0,0},{0,0,0}}, 
+   .uaxis_c={1,0,0,0}, .uaxis_s=0.25, 
+   .vaxis_c={0,0,-1,0}, .vaxis_s=0.25, .rotation=0, .lightmapscale=16, 
+   .smoothing_groups = 0};
+/**
+ * Returns a functional default vmf_side object.
+ */
+vmf_side vmf_side_default()
+{
+  // set up the ID
+  vmf_side result = vmf_side_default_struct;
+  result.id = vmf_id_counter++;
+  return result;
+}
 
 /**
  * Represents a editor section in a .vmf file
@@ -107,8 +135,17 @@ typedef struct vmf_editor
   /**/
   int visgroupautoshown;
 } vmf_editor;
+/** A vmf_editor object with default values; NOT for direct use */
+const vmf_editor vmf_editor_default_struct = 
+  {{127,127,127}, 1, 1};
+/**
+ * Returns a functional default vmf_side object.
+ */
+vmf_editor vmf_editor_default()
+{
+  return vmf_editor_default_struct;
+}
 
-// represents a solid in a vmf file
 /**
  * Represents a solid section in a .vmf file
  * .  A solid is a physical object in a vmf, made up of sides and 
@@ -124,6 +161,35 @@ typedef struct vmf_solid
   /** Describes the editor associated with this solid */
   struct vmf_editor editor;
 } vmf_solid;
+/** A vmf_solid object with default values; NOT for direct use */
+const vmf_solid vmf_solid_default_struct = {};
+/**
+ * Returns a functional default vmf_solid object.
+ */
+vmf_solid vmf_solid_default()
+{
+  vmf_solid result = vmf_solid_default_struct;
+  // set up the ID
+  result.id = vmf_id_counter++;
+  // set up the sides
+  int i;
+  for(i = 0; i < 6; i++)
+    result.sides[i] = vmf_side_default();
+  // set up the editor
+  result.editor = vmf_editor_default();
+  return result;
+}
+
+struct vmf_node_solid
+{
+  vmf_solid solid;
+  struct vmf_node_solid *next;
+};
+typedef struct vmf_list_solid
+{
+  struct vmf_node_solid *head;
+  unsigned long long int size;
+} vmf_list_solid;
 
 /**
  * Represents a world in a vmf file
@@ -146,11 +212,24 @@ typedef struct vmf_world
   char* detailvbsp;
   /**/
   char* detailmaterial;
-  /** An aggregation of all the solid objects that this world is made up of */
-  vmf_solid *solids;
-  unsigned long int _solid_size;
-  unsigned long int _solid_capacity;
+  /** An list of all the solid objects that are contained by this world */
+  vmf_list_solid solids;
 } vmf_world;
+/** A vmf_world object with default values; NOT for direct use */
+const vmf_world vmf_world_default_struct = 
+  {.mapversion=1, .classname="worldspawn", .skyname="sky_day01_01", 
+   .maxpropscreenwidth=-1, .detailvbsp="detail.vbsp", 
+   .detailmaterial="detail/detailsprites", .solids={NULL, 0}};
+/**
+ * Returns a functional default vmf_world object.
+ */
+vmf_world vmf_world_default()
+{
+  // set up the ID
+  vmf_world result = vmf_world_default_struct;
+  result.id = vmf_id_counter++;
+  return result;
+}
 
 /**
  * Represents the overall .vmf file, containing everything that makes up 
@@ -163,6 +242,20 @@ typedef struct vmf_vmf
   /** Describes the world associtaed with this vmf */
   struct vmf_world world;
 } vmf_vmf;
+/** A vmf_world object with default values; NOT for direct use */
+const vmf_vmf vmf_vmf_default_struct = {};
+/**
+ * Returns a functional default vmf object.
+ */
+vmf_vmf vmf_vmf_default()
+{
+  vmf_vmf result = vmf_vmf_default_struct;
+  // set up the versioninfo
+  result.versioninfo = vmf_versioninfo_default();
+  // set up the world
+  result.world = vmf_world_default();
+  return result;
+}
 
 // END STRUCT DECLARATIONS
 // ---
@@ -172,6 +265,8 @@ typedef struct vmf_vmf
 
 /**
  * Constructs a vmf.
+ * @param versioninfo The versioninfo for this object
+ * @param world The world object associated with this vmf
  */
 vmf_vmf vmf_build_vmf(vmf_versioninfo versioninfo, 
 		      vmf_world world);
@@ -188,8 +283,7 @@ vmf_versioninfo vmf_build_versioninfo(int editorversion,
 				      int prefab);
 
 /**
- * Constructs a vmf_world, which holds the information for a world 
- * section in a .vmf file.
+ * Constructs a vmf_world.
  * Any char* argument that is given a null pointer will take on a default 
  * value.
  */
@@ -200,8 +294,15 @@ vmf_world vmf_build_world(int mapversion,
 			  char* detailvbsp,
 			  char* detailmaterial);
 
+/**
+ * Constructs a vmf_solid.
+ * @param editor An editor to associate with this solid
+ */
 vmf_solid vmf_build_solid(vmf_editor editor);
 
+/**
+ * Constructs a vmf_side.
+ */
 vmf_side vmf_build_side(vmf_point_3d_d plane_1, 
 			vmf_point_3d_d plane_2, 
 			vmf_point_3d_d plane_3, 
@@ -223,22 +324,26 @@ vmf_editor vmf_build_editor(vmf_point_3i_i color,
 // BEGIN FUNCTION DEFINITIONS
 
 /**
- * id must be a number between 1 and 6 inclusive, or the function 
- * will do nothing.
+ * Sets the side of a solid to the value of a specific side.
+ * The solid argument must not be a null pointer.
+ * The ID argument must be a number between 1 and 6 inclusive, 
+ * or the function will do nothing.
  */
-void vmf_solid_setSide(vmf_solid *solid, vmf_side side, int id);
+void vmf_solid_setSide(vmf_solid *solid, vmf_side side, short id);
 
+/**
+ * Adds a solid to the specified world.
+ * The world argument must not be a null pointer.
+ */
 void vmf_world_addSolid(vmf_world *world, vmf_solid solid);
 
-// END FUNCTION DEFINITIONS
-// ---
-
-// ---
-// BEGIN PRINTER FUNCTION DEFINITION
-
+/**
+ * Outputs a vmf to a FILE.
+ * The file argument must not be a null pointer.
+ */
 void vmf_fprint(FILE *f, vmf_vmf vmf);
 
-// END PRINTER FUNCTION DEFINITION
+// END FUNCTION DEFINITIONS
 // ---
 
 #endif
