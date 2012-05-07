@@ -30,9 +30,9 @@
 	<h3>Sample Code:</h3>
 	<p>The following code generates a default vmf object and writes it to a .vmf file:</p>
 	<pre><code>
-	    vmf_vmf sampleVMF = vmf_vmf_default();
-	    FILE *file = fopen("output.vmf", "w");
-	    vmf_fprint(file, sampleVMF);
+vmf_vmf sampleVMF = vmf_vmf_default();
+FILE *file = fopen("output.vmf", "w");
+vmf_fprint(file, sampleVMF);
 	</code></pre>
 	<h3>.vmf Files</h3>
 	<p>.vmf files are formatted in a similar fashion as JSON.  They consist of labels, with each individual label consisting of many parameters, which may be strings (text, integers, floats, etc.) or sub-labels.  These sub-groups are designated by curly braces {}.</p>
