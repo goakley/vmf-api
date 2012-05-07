@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>vmf-api by goakley</title>
+    <title>vmf-api by Glen Oakley</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>vmf-api</h1>
-        <p>An API for .vmf files, read by the Hammer Editor</p>
+        <p>An API for .vmf files, used by the Hammer Editor for world creation.</p>
         <p class="view"><a href="https://github.com/goakley/vmf-api">View the Project on GitHub <small>goakley/vmf-api</small></a></p>
         <ul>
           <li><a href="https://github.com/goakley/vmf-api/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -25,32 +25,23 @@
         </ul>
       </header>
       <section>
-        <h3>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+        <h3>vmf-api</h3>
+	<p>The vmf-api is designed to give programmers and easy way to interact with .vmf files.  These files are associated with Vavle's Source SDK Hammer Editor, a tool used to develop worlds that can be compiled and played in games that use the Source Engine.</p>
+	<h3>Sample Code:</h3>
+	<p>The following code generates a default vmf object and writes it to a .vmf file:</p>
+	<pre><code>
+	    vmf_vmf sampleVMF = vmf_vmf_default();
+	    FILE *file = fopen("output.vmf", "w");
+	    vmf_fprint(file, sampleVMF);
+	</code></pre>
+	<h3>.vmf Files</h3>
+	<p>.vmf files are formatted in a similar fashion as JSON.  They consist of labels, with each individual label consisting of many parameters, which may be strings (text, integers, floats, etc.) or sub-labels.  These sub-groups are designated by curly braces {}.</p>
+	<h3>Hammer Editor</h3>
+	<p>The Valve Hammer editor is software for creating maps compatible with the Source Engine.  The .vmf files handled by this API are meant to be completely compatible with the Hammer Editor.  Information on using the Hammer Editor itself can be found at the <a href="https://developer.valvesoftware.com/wiki/Main_Page">Valve Developer Community wiki</a>.</p>
+	<h3>Authors and Contributors</h3>
+	<ul>
+	  <li><a href="https://github.com/goakley">@goakley</a></li> - Original concept and project maintainer.
+	</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/goakley">goakley</a></p>
